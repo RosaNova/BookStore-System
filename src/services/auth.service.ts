@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 const authService = {
     login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>('/login', credentials);
+        const response = await api.post<AuthResponse>('/customers/login', credentials);
         if (response.data.token) {
             Cookies.set('token', response.data.token, { expires: 7 }); // Expires in 7 days
         }
@@ -12,7 +12,7 @@ const authService = {
     },
 
     register: async (userData: RegisterData): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>('/register', userData);
+        const response = await api.post<AuthResponse>('/customers/register', userData);
         if (response.data.token) {
             Cookies.set('token', response.data.token, { expires: 7 });
         }
