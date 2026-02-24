@@ -1,20 +1,13 @@
 export interface Book {
     id: number;
     title: string;
-    description?: string;
+    description: string;
     price: number;
     stock?: number;
-    author_id?: number;
-    category_id?: number;
+    author: number;
     published_date?: string;
     book_img: string;
-    author: string;
-    rating: number;
-    pages: number;
-    genre: string;
-    featured?: boolean;
-    badge?: string;
-    originalPrice?: number;
+    categoryName: string;
 }
 
 export interface BookResponse {
@@ -22,3 +15,20 @@ export interface BookResponse {
     data: Book[];
 }
 
+export interface BookPriceResponse {
+    status: string;
+    data: BookPrice[];
+}
+export interface BookPrice{
+    price: number;
+}
+
+export interface BookCategoryResponse {
+    status: string;
+    data: BookCategory[];
+}
+
+export interface BookCategory {
+    id : number
+    name: string;
+}

@@ -68,7 +68,7 @@ const FeaturedBooks = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {books.slice(0, 6).map((book, i) => (
+            {books.slice(0, 6).map((book) => (
               <BookCard
                 key={book.id}
                 book_img={book.book_img}
@@ -81,7 +81,7 @@ const FeaturedBooks = () => {
                 // badge={book.badge}
                 // index={i}
                 // id={book.id}
-                genre={book.genre}
+                category={book.category}
 
               />
             ))}
