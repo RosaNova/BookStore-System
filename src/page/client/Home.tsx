@@ -2,8 +2,10 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import BookCard from "../../components/BookCard";
+import Loading from "../../components/ui/loading";
 import bookService from "../../services/book.service";
 import type { Book } from "../../types/book.types";
+
 
 
 const priceOptions = [
@@ -23,33 +25,62 @@ const ratingOptions = [
   { label: "4.0+", value: "rating-4.0" },
 ];
 
-type FilterKey = "Price" | "Genre" | "Rating";
+type FilterKey = "Price" | "Category" | "Rating";
 
 const Index = () => {
   const { searchQuery } = useOutletContext<{ searchQuery: string }>();
   const [books, setBooks] = useState<Book[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [openDropdown, setOpenDropdown] = useState<FilterKey | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedRating, setSelectedRating] = useState<string | null>(null);
+  const [categories, setCategories] = useState<{ label: string; value: string }[]>([
+    { label: "All Categories", value: "all" },
+  ]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchBooks = async () => {
+      setIsLoading(true);
       try {
         const response = await bookService.getBooks();
         setBooks(response.data);
       } catch (error) {
         console.error("Failed to fetch books:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchBooks();
   }, []);
 
-  const genreOptions = useMemo(() => [
-    { label: "All Genres", value: "all" },
-    ...Array.from(new Set(books.map((b) => b.genre))).map((g) => ({ label: g, value: g })),
-  ], [books]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await bookService.getBookCategories();
+        if (Array.isArray(res)) {
+          if (res.length === 0) return;
+          const first = res[0];
+          if (typeof first === "string") {
+            setCategories((prev) => [
+              prev[0],
+              ...((res as string[]).map((s) => ({ label: s, value: s })) || []),
+            ]);
+          } else if (typeof first === "object") {
+            // support { id, name } shape
+            setCategories((prev) => [
+              prev[0],
+              ...((res as any[]).map((c) => ({ label: String(c.name), value: String(c.name) })) || []),
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -65,8 +96,8 @@ const Index = () => {
     switch (key) {
       case "Price":
         return priceOptions.find((o) => o.value === selectedPrice)?.label;
-      case "Genre":
-        return genreOptions.find((o) => o.value === selectedGenre)?.label;
+      case "Category":
+        return categories.find((o) => o.value === selectedCategory)?.label;
       case "Rating":
         return ratingOptions.find((o) => o.value === selectedRating)?.label;
     }
@@ -85,9 +116,9 @@ const Index = () => {
       );
     }
 
-    // Genre filter
-    if (selectedGenre && selectedGenre !== "all") {
-      result = result.filter((b) => b.genre === selectedGenre);
+    // Category filter (maps to book.genre)
+    if (selectedCategory && selectedCategory !== "all") {
+      result = result.filter((b) => b.genre === selectedCategory);
     }
 
     // Price filter
@@ -106,15 +137,15 @@ const Index = () => {
     if (selectedRating === "rating-asc") result.sort((a, b) => a.rating - b.rating);
 
     return result;
-  }, [searchQuery, selectedPrice, selectedGenre, selectedRating]);
+  }, [searchQuery, selectedPrice, selectedRating]);
 
   const handleSelect = (key: FilterKey, value: string) => {
     switch (key) {
       case "Price":
         setSelectedPrice(selectedPrice === value ? null : value);
         break;
-      case "Genre":
-        setSelectedGenre(selectedGenre === value ? null : value);
+      case "Category":
+        setSelectedCategory(selectedCategory === value ? null : value);
         break;
       case "Rating":
         setSelectedRating(selectedRating === value ? null : value);
@@ -126,7 +157,7 @@ const Index = () => {
   const getOptions = (key: FilterKey) => {
     switch (key) {
       case "Price": return priceOptions;
-      case "Genre": return genreOptions;
+      case "Category": return categories;
       case "Rating": return ratingOptions;
     }
   };
@@ -134,12 +165,12 @@ const Index = () => {
   const isActive = (key: FilterKey) => {
     switch (key) {
       case "Price": return !!selectedPrice;
-      case "Genre": return !!selectedGenre && selectedGenre !== "all";
+      case "Category": return !!selectedCategory && selectedCategory !== "all";
       case "Rating": return !!selectedRating;
     }
   };
 
-  const filterKeys: FilterKey[] = ["Price", "Genre", "Rating"];
+  const filterKeys: FilterKey[] = ["Price", "Category", "Rating"];
 
   return (
     <div className="w-full">
@@ -174,7 +205,7 @@ const Index = () => {
                       {getOptions(key).map((opt) => {
                         const selected =
                           (key === "Price" && selectedPrice === opt.value) ||
-                          (key === "Genre" && selectedGenre === opt.value) ||
+                          (key === "Category" && selectedCategory === opt.value) ||
                           (key === "Rating" && selectedRating === opt.value);
                         return (
                           <button
@@ -197,7 +228,9 @@ const Index = () => {
           </div>
         </div>
 
-        {filteredBooks.length > 0 ? (
+        {isLoading ? (
+          <Loading />
+        ) : filteredBooks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {filteredBooks.map((book) => (
               <BookCard key={book.id} {...book} />

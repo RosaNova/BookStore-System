@@ -21,8 +21,7 @@ const AppRoutes = () => {
 
             {/* Admin Routes (Protected) */}
             <Route element={<AdminLayout />}>
-                <Route path="/admin" element={<Dashboard />} />
-                {/* Add more admin routes here */}
+                <Route path="/admin" element={<Dashboard />} />                {/* Add more admin routes here */}
             </Route>
 
             {/* 404 Route */}

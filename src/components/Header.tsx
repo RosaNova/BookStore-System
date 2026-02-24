@@ -1,11 +1,14 @@
 import { Search, X, BookOpen, ShoppingCart } from "lucide-react";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
+
 interface HeaderProps {
     searchQuery: string;
     onSearchChange: (query: string) => void;
 }
 
 const Header = ({ searchQuery, onSearchChange }: HeaderProps) => {
+    const navigate = useNavigate();
     return (
         <header>
             {/* Top Nav */}
@@ -39,10 +42,20 @@ const Header = ({ searchQuery, onSearchChange }: HeaderProps) => {
                             0
                         </span>
                     </button>
-                    <Button variant="ghost" size="sm" className="text-primary font-medium">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-primary font-medium"
+                        onClick={() => navigate("/register")}
+                    >
                         Register
                     </Button>
-                    <Button variant="outline" size="sm" className="rounded-full px-5">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="rounded-full px-5"
+                        onClick={() => navigate("/login")}
+                    >
                         Sign In
                     </Button>
                 </div>
