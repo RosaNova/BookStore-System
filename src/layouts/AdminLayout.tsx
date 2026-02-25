@@ -1,9 +1,22 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, BookCopy, Users, Settings, LogOut } from "lucide-react";
+import {
+    LayoutDashboard,
+    BookCopy,
+    Users,
+    Settings,
+    LogOut,
+    Search,
+    Bell,
+    ChevronRight,
+    Menu,
+    ShieldCheck
+} from "lucide-react";
+
+import { useState } from "react";
 
 const AdminLayout = () => {
     const location = useLocation();
-
+    const [isSidebarOpen, setSidebarOpen] = useState(true);
     const menuItems = [
         { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
         { icon: BookCopy, label: "Books", path: "/admin/books" },
@@ -11,16 +24,36 @@ const AdminLayout = () => {
         { icon: Settings, label: "Settings", path: "/admin/settings" },
     ];
 
+
+
+
     return (
-        <div className="flex min-h-screen bg-secondary/30">
+        <div className="flex min-h-screen bg-[#F8FAFC] font-sans selection:bg-primary/20 text-slate-900">
+            {/* Soft Background Shapes */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px]" />
+                <div className="absolute bottom-[-10%] left-[-5%] w-[35%] h-[35%] rounded-full bg-orange-400/5 blur-[100px]" />
+            </div>
+
             {/* Sidebar */}
-            <aside className="w-64 bg-card border-r border-border flex flex-col">
-                <div className="p-6 border-b border-border">
-                    <h2 className="text-xl font-bold bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                        Admin Panel
-                    </h2>
+            <aside className={`
+                relative z-20 h-screen transition-all duration-300 ease-in-out
+                ${isSidebarOpen ? "w-72" : "w-20"}
+                bg-white/80 backdrop-blur-xl border-r border-slate-200/60
+                flex flex-col shadow-[1px_0_20px_rgba(0,0,0,0.02)]
+            `}>
+                <div className="p-6 h-20 flex items-center gap-3 border-b border-slate-100">
+                    <div className="h-10 w-10 min-w-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
+                        <ShieldCheck className="text-white h-6 w-6" />
+                    </div>
+                    {isSidebarOpen && (
+                        <h2 className="text-xl font-bold tracking-tight text-slate-800 animate-in fade-in duration-500">
+                            Book<span className="text-primary italic">Admin</span>
+                        </h2>
+                    )}
                 </div>
-                <nav className="flex-1 p-4 space-y-1">
+
+                <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto custom-scrollbar">
                     {menuItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.path;
@@ -28,42 +61,81 @@ const AdminLayout = () => {
                             <Link
                                 key={item.path}
                                 to={item.path}
-                                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
-                                    ? "bg-primary text-primary-foreground"
-                                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                                    }`}
+                                className={`
+                                    group flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-200
+                                    ${isActive
+                                        ? "bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02]"
+                                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                                    }
+                                `}
                             >
-                                <Icon className="h-4 w-4" />
-                                {item.label}
+                                <Icon className={`h-5 w-5 transition-transform duration-200 group-hover:scale-110 ${isActive ? "" : "text-slate-400"}`} />
+                                {isSidebarOpen && (
+                                    <span className="flex-1 animate-in slide-in-from-left-2 duration-300">{item.label}</span>
+                                )}
+                                {isActive && isSidebarOpen && <ChevronRight className="h-4 w-4 opacity-50" />}
                             </Link>
                         );
                     })}
                 </nav>
-                <div className="p-4 border-t border-border">
-                    <button className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors">
-                        <LogOut className="h-4 w-4" />
-                        Logout
+
+                <div className="p-4 border-t border-slate-100">
+                    <button className="
+                        flex items-center gap-3 w-full px-4 py-3 rounded-2xl text-sm font-semibold 
+                        text-rose-500/80 hover:bg-rose-50 hover:text-rose-600 transition-all duration-200
+                    ">
+                        <LogOut className="h-5 w-5" />
+                        {isSidebarOpen && <span className="animate-in fade-in">Logout</span>}
                     </button>
                 </div>
             </aside>
 
-            {/* Main Content */}
-            <main className="flex-1 flex flex-col overflow-hidden">
-                <header className="h-16 bg-card border-b border-border flex items-center justify-between px-8">
-                    <h3 className="font-semibold text-foreground">
-                        {menuItems.find(item => item.path === location.pathname)?.label || "Admin"}
-                    </h3>
-                    <div className="flex items-center gap-4">
-                        <div className="text-right">
-                            <p className="text-sm font-medium">Super Admin</p>
-                            <p className="text-xs text-muted-foreground">admin@bookstore.com</p>
+            {/* Main Content Area */}
+            <main className="flex-1 flex flex-col relative z-10 overflow-hidden">
+                {/* Header */}
+                <header className="h-20 bg-white/60 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 sticky top-0">
+                    <div className="flex items-center gap-4 flex-1 max-w-xl">
+                        <button
+                            onClick={() => setSidebarOpen(!isSidebarOpen)}
+                            className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-500"
+                        >
+                            <Menu size={20} />
+                        </button>
+                        <div className="relative group flex-1">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary transition-colors" />
+                            <input
+                                type="text"
+                                placeholder="Universal search..."
+                                className="w-full pl-10 pr-4 py-2.5 bg-slate-100/50 border border-transparent focus:bg-white focus:border-primary/30 focus:ring-4 focus:ring-primary/5 rounded-xl text-sm outline-none transition-all"
+                            />
                         </div>
-                        <div className="h-10 w-10 rounded-full bg-primary/20 border border-primary/20 flex items-center justify-center font-bold text-primary">
-                            SA
+                    </div>
+
+                    <div className="flex items-center gap-6">
+                        <button className="relative p-2 rounded-xl text-slate-500 hover:bg-slate-50 transition-colors">
+                            <Bell size={20} />
+                            <span className="absolute top-2 right-2.5 h-2 w-2 rounded-full bg-rose-500 border-2 border-white" />
+                        </button>
+
+                        <div className="h-8 w-px bg-slate-200" />
+
+                        <div className="flex items-center gap-3 group cursor-pointer">
+                            <div className="text-right hidden sm:block">
+                                <p className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">Super Admin</p>
+                                <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Main Administrator</p>
+                            </div>
+                            <div className="relative">
+                                <div className="h-11 w-11 rounded-2xl bg-slate-900 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
+                                    <span className="text-white font-bold text-xs">SA</span>
+                                </div>
+                                <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-green-500 border-2 border-white shadow-sm" />
+                            </div>
                         </div>
                     </div>
                 </header>
-                <div className="flex-1 overflow-auto p-8">
+
+                {/* Page Content */}
+                <div className="flex-1 overflow-auto p-8 custom-scrollbar">
                     <Outlet />
                 </div>
             </main>

@@ -7,7 +7,7 @@ export interface Book {
     author_name: string;
     published_date?: string;
     book_img: string;
-    category_name : string;
+    category_name: string;
 }
 
 export interface BookResponse {
@@ -31,4 +31,14 @@ export interface BookCategoryResponse {
 export interface BookCategory {
     id: number
     name: string;
+}
+
+
+export interface BookCountResponse {
+    status: string;
+    total_books: number;
+}
+
+export interface BookCount {
+    total_books: number;
 }
