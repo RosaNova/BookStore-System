@@ -4,10 +4,10 @@ export interface Book {
     description: string;
     price: number;
     stock?: number;
-    author: number;
+    author_name: string;
     published_date?: string;
     book_img: string;
-    categoryName: string;
+    category_name : string;
 }
 
 export interface BookResponse {
@@ -19,7 +19,7 @@ export interface BookPriceResponse {
     status: string;
     data: BookPrice[];
 }
-export interface BookPrice{
+export interface BookPrice {
     price: number;
 }
 
@@ -29,6 +29,6 @@ export interface BookCategoryResponse {
 }
 
 export interface BookCategory {
-    id : number
+    id: number
     name: string;
 }

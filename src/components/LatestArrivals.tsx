@@ -76,18 +76,13 @@ const LatestArrivals = () => {
                     alt={book.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <span className="absolute top-3 left-3 bg-accent text-accent-foreground text-xs font-body font-bold px-3 py-1 rounded-full">
-                    {book.badge || "NEW"}
-                  </span>
+
                 </div>
 
                 <h3 className="font-display text-base font-bold text-foreground mb-1 line-clamp-1">{book.title}</h3>
                 <div className="flex items-center justify-between mb-3">
                   <span className="font-body font-bold text-foreground">${Number(book.price).toFixed(2)}</span>
-                  <div className="flex items-center gap-1">
-                    <span className="font-body text-sm text-foreground">{book.rating || 5.0}</span>
-                    <Star className="h-3 w-3 fill-primary text-primary" />
-                  </div>
+                
                 </div>
                 <button className="w-full border border-border text-foreground py-2 font-body text-xs font-semibold uppercase tracking-wider rounded-full hover:border-primary hover:text-primary transition-colors">
                   View Details

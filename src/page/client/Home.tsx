@@ -1,11 +1,10 @@
-import { useMemo, useState, useRef, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+
 import BookCard from "../../components/BookCard";
 import Loading from "../../components/ui/loading";
 import bookService from "../../services/book.service";
-import type { Book, BookCategory, BookPrice, BookPriceResponse } from "../../types/book.types";
-import { Combobox, ComboboxChips, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "../../components/ui/combobox";
+import type { Book, BookCategory, BookPrice} from "../../types/book.types";
+import { Combobox , ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "../../components/ui/combobox";
 
 const Index = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -17,7 +16,7 @@ const Index = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [booksRes, priceRes , categoryBook] = await Promise.all([
+        const [booksRes, priceRes, categoryBook] = await Promise.all([
           bookService.getBooks(),
           bookService.getBookPrice(),
           bookService.getBookCategories()
@@ -27,7 +26,7 @@ const Index = () => {
         setBookPrice(priceRes.data);
         setBookCategory(categoryBook.data);
 
-       console.log("Books:", categoryBook);
+        console.log("Books:", categoryBook);
       } catch (error) {
         console.error("Failed to fetch books:", error);
       } finally {
