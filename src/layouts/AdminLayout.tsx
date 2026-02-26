@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
     LayoutDashboard,
     BookCopy,
@@ -12,20 +12,41 @@ import {
     ShieldCheck
 } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import authService from "../services/auth.service";
 
 const AdminLayout = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [isSidebarOpen, setSidebarOpen] = useState(true);
+    const [admin, setAdmin] = useState<any>(authService.getStoredAdmin());
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            // Even though we have stored admin, we can still fetch to ensure data is fresh
+            try {
+                const userData = await authService.getCurrentUser();
+                setAdmin(userData);
+            } catch (error) {
+                console.error("Failed to fetch admin user:", error);
+            }
+        };
+        if (!admin) {
+            fetchUser();
+        }
+    }, [admin]);
+
+    const handleLogout = () => {
+        authService.logout();
+        navigate("/login");
+    };
+
     const menuItems = [
-        { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
-        { icon: BookCopy, label: "Books", path: "/admin/books" },
-        { icon: Users, label: "Users", path: "/admin/users" },
-        { icon: Settings, label: "Settings", path: "/admin/settings" },
+        { icon: LayoutDashboard, label: "Dashboard", path: "/superadmin" },
+        { icon: BookCopy, label: "Books", path: "/superadmin/books" },
+        { icon: Users, label: "Users", path: "/superadmin/users" },
+        { icon: Settings, label: "Settings", path: "/superadmin/settings" },
     ];
-
-
-
 
     return (
         <div className="flex min-h-screen bg-[#F8FAFC] font-sans selection:bg-primary/20 text-slate-900">
@@ -37,7 +58,7 @@ const AdminLayout = () => {
 
             {/* Sidebar */}
             <aside className={`
-                relative z-20 h-screen transition-all duration-300 ease-in-out
+                fixed inset-y-0 left-0 z-30 transition-all duration-300 ease-in-out
                 ${isSidebarOpen ? "w-72" : "w-20"}
                 bg-white/80 backdrop-blur-xl border-r border-slate-200/60
                 flex flex-col shadow-[1px_0_20px_rgba(0,0,0,0.02)]
@@ -80,7 +101,9 @@ const AdminLayout = () => {
                 </nav>
 
                 <div className="p-4 border-t border-slate-100">
-                    <button className="
+                    <button
+                        onClick={handleLogout}
+                        className="
                         flex items-center gap-3 w-full px-4 py-3 rounded-2xl text-sm font-semibold 
                         text-rose-500/80 hover:bg-rose-50 hover:text-rose-600 transition-all duration-200
                     ">
@@ -91,7 +114,10 @@ const AdminLayout = () => {
             </aside>
 
             {/* Main Content Area */}
-            <main className="flex-1 flex flex-col relative z-10 overflow-hidden">
+            <main className={`
+                flex-1 flex flex-col relative z-10 transition-all duration-300
+                ${isSidebarOpen ? "ml-72" : "ml-20"}
+            `}>
                 {/* Header */}
                 <header className="h-20 bg-white/60 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 sticky top-0">
                     <div className="flex items-center gap-4 flex-1 max-w-xl">
@@ -121,15 +147,22 @@ const AdminLayout = () => {
 
                         <div className="flex items-center gap-3 group cursor-pointer">
                             <div className="text-right hidden sm:block">
-                                <p className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">Super Admin</p>
-                                <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Main Administrator</p>
+                                <p className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">
+                                    {admin ? admin.name : "Admin"}
+                                </p>
+                                <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400">
+                                    {admin ? admin.role : "Main Administrator"}
+                                </p>
                             </div>
                             <div className="relative">
                                 <div className="h-11 w-11 rounded-2xl bg-slate-900 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200">
-                                    <span className="text-white font-bold text-xs">SA</span>
+                                    <span className="text-white font-bold text-xs">
+                                        {admin ? (admin.name || admin.email).substring(0, 2).toUpperCase() : "AD"}
+                                    </span>
                                 </div>
                                 <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-green-500 border-2 border-white shadow-sm" />
                             </div>
+
                         </div>
                     </div>
                 </header>

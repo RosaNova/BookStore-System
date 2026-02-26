@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, User, Loader2, MapPin, Phone } from "lucide-react";
 import authService from "../../services/auth.service";
 
-const RegisterForm = () => {
+const CustomerRegister = () => {
     const [first_name, setFirstName] = useState("");
     const [last_name, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -175,4 +175,4 @@ const RegisterForm = () => {
     )
 }
 
-export default RegisterForm
+export default CustomerRegister

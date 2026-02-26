@@ -19,10 +19,19 @@ const Login = () => {
         setError(null);
 
         try {
-            await authService.login({ email, password });
-            navigate("/");
+            const response = await authService.adminLogin({ email, password });
+            if (response.admin && response.admin.role === "admin") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+            try {
+                await authService.login({ email, password });
+                navigate("/");
+            } catch (clientErr: any) {
+                setError(err.response?.data?.message || clientErr.response?.data?.message || 'Login failed. Please check your credentials.');
+            }
         } finally {
             setIsLoading(false);
         }

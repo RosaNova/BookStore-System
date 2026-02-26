@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen } from "lucide-react";
-import LoginForm from "../../components/Authentication/LoginForm";
-import RegisterForm from "../../components/Authentication/RegisterForm";
+import CustomerLoginForm from "../../components/Authentication/CustomerLoginForm";
+import CustomerRegisterForm from "../../components/Authentication/CustomerRegisterForm";
 import { useLocation, Link } from "react-router-dom";
 
 const Auth = () => {
@@ -48,7 +48,7 @@ const Auth = () => {
                             transition={{ duration: 0.25 }}
                         >
 
-                            {isLogin ? <LoginForm /> : <RegisterForm />}
+                            {isLogin ? <CustomerLoginForm /> : <CustomerRegisterForm />}
 
                         </motion.div>
 

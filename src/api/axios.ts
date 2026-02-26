@@ -37,8 +37,8 @@ api.interceptors.response.use(
             }
 
             // Global error message handling
-            const message = error.response.data?.message || 'Something went wrong';
-            console.error(`[API Error]: ${message}`);
+            const message = error.response.data?.message || error.response.statusText || 'Something went wrong';
+            console.error(`[API Error]: ${message} (Status: ${error.response.status})`);
         } else if (error.request) {
             console.error('[API Error]: No response from server');
         } else {

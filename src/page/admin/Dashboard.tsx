@@ -77,25 +77,6 @@ const Dashboard = () => {
 
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Page Title & Actions */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                        Analytics <span className="text-primary italic">Intelligence</span>
-                    </h1>
-                    <p className="text-slate-500 font-medium mt-1">Real-time performance monitoring and ecosystem health.</p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
-                        <Calendar size={16} />
-                        Dec 2025 - Feb 2026
-                    </button>
-                    <button className="p-2 bg-primary text-white rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
-                        <Filter size={20} />
-                    </button>
-                </div>
-            </div>
-
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat, i) => {

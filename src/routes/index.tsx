@@ -2,10 +2,14 @@ import { Routes, Route } from 'react-router-dom'
 import Home from '../page/client/Home'
 import Authentication from '../page/client/Authentication'
 import Dashboard from '../page/admin/Dashboard'
+import AdminAuthentication from '../page/admin/AdminAuthentication'
 import ProtectedRoute from './ProtectedRoute'
 import ClientLayout from '../layouts/ClientLayout'
 import AdminLayout from '../layouts/AdminLayout'
 import NotFound from '../page/NotFound'
+import Books from '../page/admin/Books'
+import Users from '../page/admin/Users'
+import Settings from '../page/admin/Settings'
 
 const AppRoutes = () => {
     return (
@@ -18,12 +22,17 @@ const AppRoutes = () => {
             {/* Auth Routes (No layout or specific layout) */}
             <Route path="/login" element={<Authentication />} />
             <Route path="/register" element={<Authentication />} />
+            <Route path="/superadmin/login" element={<AdminAuthentication />} />
 
             {/* Admin Routes (Protected) */}
-            <Route element={<AdminLayout />}>
-                <Route path="/admin" element={<Dashboard />} />                {/* Add more admin routes here */}
+            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                <Route element={<AdminLayout />}>
+                    <Route path="/superadmin" element={<Dashboard />} />
+                    <Route path="/superadmin/books" element={<Books />} />
+                    <Route path="/superadmin/users" element={<Users />} />
+                    <Route path="/superadmin/settings" element={<Settings />} />
+                </Route>
             </Route>
-
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
         </Routes>
